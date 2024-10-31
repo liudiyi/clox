@@ -1,0 +1,4 @@
+C:/Users/liudi/Desktop/intepreter/clox/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/liudi/Desktop/intepreter/clox/build/CMakeFiles/ZERO_CHECK.dir
+C:/Users/liudi/Desktop/intepreter/clox/build/src/CMakeFiles/clox.dir
+C:/Users/liudi/Desktop/intepreter/clox/build/src/CMakeFiles/ALL_BUILD.dir
