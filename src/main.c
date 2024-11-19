@@ -61,18 +61,23 @@ static void runFile(const char *path) {
   if (result == INTERPRET_RUNTIME_ERROR)
     exit(70);
 }
-
+static void replTemp() {
+  char line[1024] = "!(5 - 4 > 3 * 2 == !nil)";
+  interpret(line);
+}
 int main(int argc, const char *argv[]) {
   initVM();
 
-  if (argc == 1) {
-    repl();
-  } else if (argc == 2) {
-    runFile(argv[1]);
-  } else {
-    fprintf(stderr, "Usage: clox [path]\n");
-    exit(64);
-  }
+  replTemp();
+
+  // if (argc == 1) {
+  //   repl();
+  // } else if (argc == 2) {
+  //   runFile(argv[1]);
+  // } else {
+  //   fprintf(stderr, "Usage: clox [path]\n");
+  //   exit(64);
+  // }
 
   freeVM();
   return 0;
