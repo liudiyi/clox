@@ -62,7 +62,11 @@ static void runFile(const char *path) {
     exit(70);
 }
 static void replTemp() {
-  char line[1024] = "!(5 - 4 > 3 * 2 == !nil)";
+  char line[1024] = "var breakfast = \"beignets\";\n"
+                    "var beverage = \"cafe au lait\";\n"
+                    "breakfast = \"beignets with \" + beverage;\n"
+                    "\n"
+                    "print breakfast;";
   interpret(line);
 }
 int main(int argc, const char *argv[]) {
