@@ -69,10 +69,19 @@ static void replTemp() {
                     "print breakfast;";
   interpret(line);
 }
+
+static void readFileTemp() {
+  char path[1024] =
+      "C:\\Users\\liudi\\Desktop\\intepreter\\clox\\cloxCode\\clox_code.txt";
+  runFile(path);
+}
+
 int main(int argc, const char *argv[]) {
   initVM();
 
-  replTemp();
+  // replTemp();
+
+  readFileTemp();
 
   // if (argc == 1) {
   //   repl();
