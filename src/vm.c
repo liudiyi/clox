@@ -19,7 +19,7 @@ static Value peek(int distance);
 static bool isFalsey(Value value);
 static void concatenate();
 static bool callValue(Value callee, int argCount);
-static bool call(ObjFunction *function, int argCount);
+static bool call(ObjClosure *closure, int argCount);
 static void closeUpvalues(Value *last);
 static ObjUpvalue *captureUpvalue(Value *local);
 
@@ -36,15 +36,12 @@ static void runtimeError(const char *format, ...) {
   va_end(args);
   fputs("\n", stderr);
 
-  CallFrame *frame = &vm.frames[vm.frameCount - 1];
-  ObjFunction *function = frame->closure->function;
-  size_t instruction = frame->ip - function->chunk.code - 1;
-  int line = function->chunk.lines[instruction];
-  fprintf(stderr, "[line %d] in script\n", line);
-
   for (int i = vm.frameCount - 1; i >= 0; i--) {
     CallFrame *frame = &vm.frames[i];
-    ObjFunction *function = function;
+    ObjFunction *function = frame->closure->function;
+
+    // -1 because the IP is sitting on the next instruction to be
+    // executed.
     size_t instruction = frame->ip - function->chunk.code - 1;
     fprintf(stderr, "[line %d] in ", function->chunk.lines[instruction]);
     if (function->name == NULL) {
@@ -68,6 +65,13 @@ static void defineNative(const char *name, NativeFn function) {
 void initVM() {
   resetStack();
   vm.objects = NULL;
+
+  vm.bytesAllocated = 0;
+  vm.nextGC = 1024 * 1024;
+
+  vm.grayCount = 0;
+  vm.grayCapacity = 0;
+  vm.grayStack = NULL;
 
   initTable(&vm.globals);
   initTable(&vm.strings);
@@ -395,8 +399,8 @@ static bool isFalsey(Value value) {
 }
 
 static void concatenate() {
-  ObjString *b = AS_STRING(pop());
-  ObjString *a = AS_STRING(pop());
+  ObjString *b = AS_STRING(peek(0));
+  ObjString *a = AS_STRING(peek(1));
 
   int length = a->length + b->length;
   char *chars = ALLOCATE(char, length + 1);
@@ -405,5 +409,7 @@ static void concatenate() {
   chars[length] = '\0';
 
   ObjString *result = takeString(chars, length);
+  pop();
+  pop();
   push(OBJ_VAL(result));
 }
